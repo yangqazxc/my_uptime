@@ -38,7 +38,7 @@
 
 本项目默认使用 [Cloudflare Pages](https://pages.cloudflare.com/) 来行部署
 
-- `star` 并 `fork` 本项目 😘
+- `star` 并 `fork` 本项目 
 - 可以使用全新的 [NuxtHub](https://hub.nuxt.com/) 来快捷的部署本项目，如果您有在 Vercel 上部署项目的经历，那么过程是大致相同的，当然，也可以使用 [Cloudflare Pages](https://pages.cloudflare.com/) 来部署
 - 在点击下一步之前请先配置好环境变量，具体内容请参考 `.env.example` 文件中的内容，其中 `API_KEY` 为必填项
 - 若进展顺利，你就可看到项目主页面了
