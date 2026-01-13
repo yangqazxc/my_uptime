@@ -13,6 +13,8 @@ export interface SiteDaysStatus {
     // 时长
     duration: number;
   };
+  // 平均响应时间（毫秒）
+  ping?: number;
 }
 
 export interface SiteStatusType extends SiteDaysStatus {
