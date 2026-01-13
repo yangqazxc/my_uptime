@@ -22,7 +22,6 @@ export default defineNuxtConfig({
   // modules
   modules: [
     "@pinia/nuxt",
-    "pinia-plugin-persistedstate",
     "@nuxt/eslint",
     "nuxtjs-naive-ui",
     "@vite-pwa/nuxt",
