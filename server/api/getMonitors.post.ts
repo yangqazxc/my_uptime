@@ -5,24 +5,14 @@ import { getCache, setCache } from "~/utils/cache-server";
 import { formatSiteData } from "~/utils/format";
 import { convertKumaToUptimeRobot } from "../utils/kumaAdapter";
 
-const getRanges = ():
-  | {
-      minutes: dayjs.Dayjs[];
-    }
-  | undefined => {
+// 不再需要生成时间范围，直接使用心跳数量配置
+const getHeartbeatCount = (): number => {
   try {
-    const minutes = [];
     const config = useRuntimeConfig();
-    const countMinutes = config.public.countDays; // 复用配置，但现在表示分钟数
-    const now = dayjs();
-    // 生成分钟范围数组（过去 N 分钟，从1分钟前开始，避免当前未完成的分钟）
-    for (let m = 1; m <= countMinutes; m++) {
-      minutes.push(now.subtract(m, "minute"));
-    }
-    return { minutes };
+    return config.public.countDays; // 现在表示要显示的心跳数量
   } catch (error) {
     console.error(error);
-    return undefined;
+    return 45; // 默认45条
   }
 };
 
@@ -60,9 +50,7 @@ export default defineEventHandler(async (event): Promise<MonitorsResult> => {
       };
     }
 
-    const rangesData = getRanges();
-    if (!rangesData) throw new Error("Missing ranges data");
-    const { minutes } = rangesData;
+    const heartbeatCount = getHeartbeatCount();
 
     // 调用 Kuma API 获取状态页面数据
     const statusPageUrl = `${kumaApiUrl}/api/status-page/${kumaStatusPageSlug}`;
@@ -74,15 +62,15 @@ export default defineEventHandler(async (event): Promise<MonitorsResult> => {
       $fetch(heartbeatUrl, { method: "GET" }),
     ]);
 
-    // 转换 Kuma 数据为 UptimeRobot 格式
+    // 转换 Kuma 数据为 UptimeRobot 格式（直接使用真实心跳）
     const convertedData = convertKumaToUptimeRobot(
       statusData,
       heartbeatData,
-      minutes,
+      heartbeatCount,
     );
 
     // 处理数据
-    const data = formatSiteData(convertedData, minutes);
+    const data = formatSiteData(convertedData);
 
     // 缓存数据（30秒）
     setCache(cacheKey, data, 1000 * 30);
