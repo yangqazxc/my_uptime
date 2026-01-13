@@ -25,6 +25,7 @@ export const formatSiteData = (
   const formatData = sites?.map((site: any): SiteStatusType => {
     // 解析每分钟数据
     const ranges = site.custom_uptime_ranges.split("-");
+    const pings = site.custom_uptime_pings?.split("-") || []; // 解析响应时间数据
     const percent = formatNumber(ranges.pop() || 0);
     const minuteData: SiteDaysStatus[] = [];
     const timeMap = new Map();
@@ -35,6 +36,7 @@ export const formatSiteData = (
         date: timePoint.unix(),
         percent: formatNumber(ranges[index] || 0),
         down: { times: 0, duration: 0 },
+        ping: pings[index] ? parseInt(pings[index]) : undefined, // 添加响应时间
       };
     });
     // 获取总数据
