@@ -36,7 +36,7 @@
 
 ### Cloudflare
 
-本项目默认使用 [Cloudflare Pages](https://pages.cloudflare.com/) 来行部署
+本项目默认使用 [Cloudflare Pages](https://pages.cloudflare.com) 来行部署
 
 - `star` 并 `fork` 本项目 
 - 可以使用全新的 [NuxtHub](https://hub.nuxt.com/) 来快捷的部署本项目，如果您有在 Vercel 上部署项目的经历，那么过程是大致相同的，当然，也可以使用 [Cloudflare Pages](https://pages.cloudflare.com/) 来部署
