@@ -79,7 +79,7 @@ export const formatSiteData = (
       type: site?.type ?? 1,
       interval: site?.interval ?? 0,
       percent,
-      days: minuteData?.reverse(),
+      days: minuteData, // 已经在 kumaAdapter 中反转过了，不需要再次反转
       down: total,
     };
   });
