@@ -66,7 +66,12 @@ export function convertKumaToUptimeRobot(
       kumaHeartbeatData?.heartbeatList?.[monitorId] || [];
 
     // 获取 URL - 尝试多个可能的字段
-    const monitorUrl = (monitor as any).url || (monitor as any).hostname || monitor.name;
+    let monitorUrl = (monitor as any).url || (monitor as any).hostname || monitor.name;
+
+    // 确保 URL 有正确的协议前缀
+    if (monitorUrl && !monitorUrl.startsWith('http://') && !monitorUrl.startsWith('https://')) {
+      monitorUrl = 'https://' + monitorUrl;
+    }
 
     // 计算每分钟的可用率和响应时间
     const minuteRanges: string[] = [];
