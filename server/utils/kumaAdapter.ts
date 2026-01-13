@@ -84,8 +84,15 @@ export function convertKumaToUptimeRobot(
     const timePoints: number[] = []; // 存储每个心跳的真实时间戳
 
     recentHeartbeats.forEach((heartbeat: KumaHeartbeat) => {
-      // 计算可用率：UP=100%, DOWN=0%
-      const percent = heartbeat.status === 1 ? 100 : 0;
+      // 计算可用率：UP=100%, DOWN=0%, PENDING=50%
+      let percent = 0;
+      if (heartbeat.status === 1) {
+        percent = 100; // UP
+      } else if (heartbeat.status === 0) {
+        percent = 0; // DOWN
+      } else if (heartbeat.status === 2) {
+        percent = 50; // PENDING - 显示为部分可用
+      }
       const ping = heartbeat.ping || 0;
 
       // Kuma 返回的是 UTC 时间，在时间字符串后加 'Z' 表示 UTC
