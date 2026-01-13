@@ -75,33 +75,34 @@ export function convertKumaToUptimeRobot(
 
     // 计算每分钟的可用率和响应时间
     const minuteRanges: string[] = [];
-    const minutePings: number[] = []; // 保存每分钟的平均响应时间
-    minutes.forEach((minute) => {
-      const minuteStart = minute.unix();
-      const minuteEnd = minute.add(1, "minute").unix();
+    const minutePings: number[] = [];
 
-      // 获取该分钟内的心跳数据
-      const minuteHeartbeats = heartbeats.filter((h: KumaHeartbeat) => {
+    minutes.forEach((minute) => {
+      const minuteTimestamp = minute.unix();
+
+      // 找到距离该分钟最近的心跳（前后30秒范围内）
+      let closestHeartbeat: KumaHeartbeat | null = null;
+      let minTimeDiff = Infinity;
+
+      heartbeats.forEach((h: KumaHeartbeat) => {
         const hTime = dayjs(h.time).unix();
-        return hTime >= minuteStart && hTime < minuteEnd;
+        const timeDiff = Math.abs(hTime - minuteTimestamp);
+
+        // 只考虑前后30秒内的心跳
+        if (timeDiff <= 30 && timeDiff < minTimeDiff) {
+          minTimeDiff = timeDiff;
+          closestHeartbeat = h;
+        }
       });
 
-      // 计算可用率和平均响应时间
+      // 使用最近的心跳数据
       let percent = 0;
       let avgPing = 0;
-      if (minuteHeartbeats.length > 0) {
-        const upCount = minuteHeartbeats.filter(
-          (h: KumaHeartbeat) => h.status === 1,
-        ).length;
-        percent = (upCount / minuteHeartbeats.length) * 100;
 
-        // 计算平均响应时间（只统计成功的心跳）
-        const pings = minuteHeartbeats
-          .filter((h: KumaHeartbeat) => h.status === 1 && h.ping)
-          .map((h: KumaHeartbeat) => h.ping || 0);
-        if (pings.length > 0) {
-          avgPing = pings.reduce((sum, p) => sum + p, 0) / pings.length;
-        }
+      if (closestHeartbeat) {
+        // 如果找到了心跳，使用其状态
+        percent = closestHeartbeat.status === 1 ? 100 : 0;
+        avgPing = closestHeartbeat.ping || 0;
       }
 
       minuteRanges.push(percent.toFixed(2));
