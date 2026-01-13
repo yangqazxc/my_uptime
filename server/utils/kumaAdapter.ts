@@ -131,7 +131,7 @@ export function convertKumaToUptimeRobot(
     monitors.push({
       id: monitor.id,
       friendly_name: monitor.name,
-      url: monitor.url || "",
+      url: monitor.url || undefined, // 改为 undefined 而不是空字符串
       status: status,
       type: TYPE_MAP[monitor.type?.toLowerCase()] || 1,
       interval: monitor.interval || 60,
