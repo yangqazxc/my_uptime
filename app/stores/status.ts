@@ -19,8 +19,7 @@ export const useStatusStore = defineStore(
   },
   {
     persist: {
-      storage: piniaPluginPersistedstate.localStorage(),
-      pick: ["siteLang"],
+      paths: ["siteLang"],
     },
   },
 );
