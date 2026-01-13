@@ -146,7 +146,7 @@ export default defineNuxtConfig({
       { code: "ko-KR", name: "한국어", file: "ko-KR.json" },
     ],
     lazy: true,
-    langDir: "lang/locales",
+    langDir: "locales",
     defaultLocale: "zh-CN",
     strategy: "no_prefix",
   },
