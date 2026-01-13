@@ -59,7 +59,7 @@
         <n-flex
           v-if="site?.days?.length"
           :size="2"
-          class="timeline"
+          :class="['timeline', { 'is-refreshing': refreshingStates[site.id] }]"
           justify="space-between"
         >
           <n-popover
@@ -71,7 +71,7 @@
                 :style="{
                   backgroundColor: `var(--${getMinuteStatus(minute.percent)}-color)`,
                 }"
-                class="minute"
+                :class="['minute', { 'is-new': isNewHeartbeat(site.id, minuteIndex) }]"
               />
             </template>
             <div class="minute-data">
@@ -204,6 +204,50 @@ const getPercentClass = (percent: number): string => {
   else return "error";
 };
 
+// 刷新动画状态
+const refreshingStates = ref<Record<number, boolean>>({});
+const newHeartbeats = ref<Record<number, number>>({});
+const previousData = ref<Record<number, number>>({}); // 存储每个站点最后一条心跳的时间戳
+
+// 判断是否为新心跳
+const isNewHeartbeat = (siteId: number, index: number): boolean => {
+  const site = siteData.value?.find(s => s.id === siteId);
+  if (!site?.days?.length) return false;
+  return index === site.days.length - 1 && newHeartbeats.value[siteId] === index;
+};
+
+// 监听数据变化，触发动画
+watch(siteData, (newData, oldData) => {
+  if (!newData) return;
+
+  newData.forEach(site => {
+    const lastHeartbeat = site.days?.[site.days.length - 1];
+    if (!lastHeartbeat?.date) return;
+
+    const previousTimestamp = previousData.value[site.id];
+
+    // 如果有新数据（时间戳不同）
+    if (previousTimestamp && lastHeartbeat.date !== previousTimestamp) {
+      // 触发刷新动画
+      refreshingStates.value[site.id] = true;
+      newHeartbeats.value[site.id] = site.days.length - 1;
+
+      // 600ms 后移除刷新状态
+      setTimeout(() => {
+        refreshingStates.value[site.id] = false;
+      }, 600);
+
+      // 2000ms 后移除新心跳高亮
+      setTimeout(() => {
+        newHeartbeats.value[site.id] = -1;
+      }, 2000);
+    }
+
+    // 更新存储的时间戳
+    previousData.value[site.id] = lastHeartbeat.date;
+  });
+}, { deep: true });
+
 // 重试
 const refresh = async () => {
   statusStore.$patch({
@@ -272,16 +316,32 @@ onMounted(getSiteData);
     }
     .timeline {
       margin: 15px 0 10px;
+      position: relative;
+      will-change: transform;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+      // 刷新时的左移动画
+      &.is-refreshing {
+        animation: slide-left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
       .minute {
         height: 26px;
         flex: 1;
         border-radius: 25px;
         background-color: var(--normal-color);
-        transition: transform 0.3s;
+        transition: transform 0.3s, box-shadow 0.3s;
         transform-origin: bottom;
         cursor: pointer;
+        position: relative;
+
         &:hover {
           transform: scale(1.1);
+        }
+
+        // 新心跳高亮动画
+        &.is-new {
+          animation: pulse-glow 1.5s ease-out;
         }
       }
     }
@@ -352,6 +412,40 @@ onMounted(getSiteData);
     text-align: center;
     padding: 4px 0;
     font-size: 12px;
+  }
+}
+
+// 左移动画
+@keyframes slide-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-2%);
+  }
+}
+
+// 新心跳高亮动画
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+    transform: scale(1);
+  }
+  25% {
+    box-shadow: 0 0 20px 5px currentColor;
+    transform: scale(1.15);
+  }
+  50% {
+    box-shadow: 0 0 15px 3px currentColor;
+    transform: scale(1.1);
+  }
+  75% {
+    box-shadow: 0 0 10px 2px currentColor;
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    transform: scale(1);
   }
 }
 
