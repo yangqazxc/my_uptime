@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import type { MonitorsDataResult, MonitorsResult } from "~~/types/main";
 import { getCache, setCache } from "~/utils/cache-server";
 import { formatSiteData } from "~/utils/format";
-import { convertKumaToUptimeRobot } from "~/utils/kumaAdapter";
+import { convertKumaToUptimeRobot } from "../utils/kumaAdapter";
 
 const getRanges = ():
   | {
