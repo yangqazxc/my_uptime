@@ -88,9 +88,9 @@ export function convertKumaToUptimeRobot(
       const percent = heartbeat.status === 1 ? 100 : 0;
       const ping = heartbeat.ping || 0;
 
-      // 直接解析 Kuma 时间为时间戳
-      // Kuma 返回的时间格式: "2026-01-13 09:12:56.467"
-      const timestamp = dayjs(heartbeat.time).unix();
+      // Kuma 返回的是 UTC 时间，在时间字符串后加 'Z' 表示 UTC
+      const utcTimeString = heartbeat.time.replace(' ', 'T') + 'Z';
+      const timestamp = dayjs(utcTimeString).unix();
 
       minuteRanges.push(percent.toFixed(2));
       minutePings.push(Math.round(ping));
