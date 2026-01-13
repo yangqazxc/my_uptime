@@ -65,8 +65,9 @@ export function convertKumaToUptimeRobot(
     const heartbeats: KumaHeartbeat[] =
       kumaHeartbeatData?.heartbeatList?.[monitorId] || [];
 
-    // 计算每分钟的可用率
+    // 计算每分钟的可用率和响应时间
     const minuteRanges: string[] = [];
+    const minutePings: number[] = []; // 保存每分钟的平均响应时间
     minutes.forEach((minute) => {
       const minuteStart = minute.unix();
       const minuteEnd = minute.add(1, "minute").unix();
@@ -77,16 +78,26 @@ export function convertKumaToUptimeRobot(
         return hTime >= minuteStart && hTime < minuteEnd;
       });
 
-      // 计算可用率
+      // 计算可用率和平均响应时间
       let percent = 0;
+      let avgPing = 0;
       if (minuteHeartbeats.length > 0) {
         const upCount = minuteHeartbeats.filter(
           (h: KumaHeartbeat) => h.status === 1,
         ).length;
         percent = (upCount / minuteHeartbeats.length) * 100;
+
+        // 计算平均响应时间（只统计成功的心跳）
+        const pings = minuteHeartbeats
+          .filter((h: KumaHeartbeat) => h.status === 1 && h.ping)
+          .map((h: KumaHeartbeat) => h.ping || 0);
+        if (pings.length > 0) {
+          avgPing = pings.reduce((sum, p) => sum + p, 0) / pings.length;
+        }
       }
 
       minuteRanges.push(percent.toFixed(2));
+      minutePings.push(Math.round(avgPing));
     });
 
     // 计算总可用率
@@ -125,6 +136,7 @@ export function convertKumaToUptimeRobot(
       type: TYPE_MAP[monitor.type?.toLowerCase()] || 1,
       interval: monitor.interval || 60,
       custom_uptime_ranges: minuteRanges.join("-"),
+      custom_uptime_pings: minutePings.join("-"), // 添加响应时间数据
       logs: logs,
     });
   });
