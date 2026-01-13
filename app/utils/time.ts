@@ -5,6 +5,8 @@ interface FormatTimeOptions {
   showTime?: boolean;
   // 若为今日，是否仅显示时分秒
   showOnlyTimeIfToday?: boolean;
+  // 自定义格式
+  format?: string;
 }
 
 /**
@@ -20,11 +22,16 @@ export const formatTime = (
   options: FormatTimeOptions = {},
 ): string => {
   if (!time) return "未知时间";
-  const { showTime = false, showOnlyTimeIfToday = false } = options;
+  const { showTime = false, showOnlyTimeIfToday = false, format } = options;
   const correctedTime = time < 10000000000 ? time * 1000 : time;
 
   const date = dayjs(correctedTime);
   const today = dayjs().startOf("day");
+
+  // 如果指定了自定义格式，直接使用
+  if (format) {
+    return date.format(format);
+  }
 
   // 若为今日
   if (showOnlyTimeIfToday && date.isSame(today, "day")) {
