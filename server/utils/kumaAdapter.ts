@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// 启用 UTC 和时区插件
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 /**
  * Uptime Kuma 数据适配器
@@ -88,9 +94,12 @@ export function convertKumaToUptimeRobot(
       const percent = heartbeat.status === 1 ? 100 : 0;
       const ping = heartbeat.ping || 0;
 
+      // 解析 Kuma 时间（假设为 UTC 时间，转换为本地时间戳）
+      const timestamp = dayjs.utc(heartbeat.time).local().unix();
+
       minuteRanges.push(percent.toFixed(2));
       minutePings.push(Math.round(ping));
-      timePoints.push(dayjs(heartbeat.time).unix());
+      timePoints.push(timestamp);
     });
 
     // 计算总可用率
