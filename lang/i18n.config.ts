@@ -1,11 +1,75 @@
-import zh from "./locales/zh-CN.json";
-import en from "./locales/en-US.json";
-import jp from "./locales/ja-JP.json";
-import kr from "./locales/ko-KR.json";
-
-export default defineI18nConfig(() => ({
+export default {
   legacy: false,
   locale: "zh-CN",
-  messages: { "zh-CN": zh, "en-US": en, "ja-JP": jp, "ko-KR": kr },
   fallbackLocale: "zh-CN",
-}));
+  messages: {
+    "zh-CN": {
+      uptimeRobot: "UptimeRobot",
+      site: {
+        loading: "站点状态加载中",
+        unknown: "站点状态未知",
+        normal: "站点运行正常",
+        error: "全部站点出现异常",
+        warn: "部分站点出现异常"
+      },
+      nav: {
+        about: "关于本站",
+        logout: "退出登录"
+      },
+      header: {
+        loading: "请稍等片刻 ...",
+        unknown: "这可能是临时性问题，请刷新后重试",
+        update: "更新于",
+        updateAt: "将于 {time} 后刷新"
+      },
+      footer: {
+        basedOn: "基于",
+        interface: "接口",
+        checkFrequency: "检测频率",
+        fiveMinutes: "60 秒"
+      },
+      card: {
+        unknownDate: "未知时间",
+        unknownData: "该分钟无数据",
+        percent: "可用率 {percent}%",
+        percentData: "故障 {times} 次，故障时长 {duration}，可用率 {percent}%",
+        summary: "最近 {minutes} 分钟内可用率 {percent}%",
+        summaryData: "最近 {minutes} 分钟内故障 {times} 次，累计故障时长 {duration}，平均可用率 {percent}%",
+        error: "出错啦",
+        errorText: "接口调用超限或请求错误，请稍后重试",
+        status: {
+          stop: "暂停检测",
+          unknown: "还未检查",
+          pause: "暂停检测",
+          normal: "正常访问",
+          error: "站点异常",
+          down: "无法访问"
+        },
+        type: {
+          tip: "每间隔 {interval}，{type}来判断段站点是否运行正常",
+          HTTP: "通过发送 HTTP 或 HTTPS 请求来监测目标服务的可用性",
+          KEYWORD: "通过获取页面内容，并检查返回的内容是否包含指定的关键词",
+          PING: "使用 ICMP 协议向目标服务器发送 Ping 请求",
+          PORT: "检测目标服务器的指定端口是否开放",
+          HEARTBEAT: "由被监控的服务主动发送"心跳信号"到监控服务，表明自身正常运行"
+        }
+      },
+      meta: {
+        hour: "时",
+        minute: "分",
+        second: "秒",
+        fastTip: "刷新过于频繁，请稍后再试",
+        refresh: "重试",
+        now: "当前"
+      },
+      login: {
+        tip: "站点已开启密码保护，请输入密码登录后查看",
+        password: "密码",
+        placeholder: "请输入密码",
+        submit: "登录",
+        error: "密码错误，请重试",
+        success: "登录成功"
+      }
+    },
+  },
+};
