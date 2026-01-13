@@ -41,11 +41,12 @@ interface KumaMonitor {
 
 /**
  * 转换 Kuma 数据为 UptimeRobot 格式
+ * 直接使用真实心跳数据，不做时间匹配
  */
 export function convertKumaToUptimeRobot(
   kumaStatusData: any,
   kumaHeartbeatData: any,
-  minutes: dayjs.Dayjs[],
+  heartbeatCount: number, // 要显示的心跳数量
 ): any {
   const monitors: any[] = [];
 
@@ -73,40 +74,23 @@ export function convertKumaToUptimeRobot(
       monitorUrl = 'https://' + monitorUrl;
     }
 
-    // 计算每分钟的可用率和响应时间
+    // 直接使用真实心跳数据，取最近 N 条
+    // Kuma 返回的心跳是从新到旧排序的
+    const recentHeartbeats = heartbeats.slice(0, heartbeatCount);
+
+    // 为每条心跳生成数据
     const minuteRanges: string[] = [];
     const minutePings: number[] = [];
+    const timePoints: number[] = []; // 存储每个心跳的真实时间戳
 
-    minutes.forEach((minute) => {
-      const minuteTimestamp = minute.unix();
-
-      // 找到距离该分钟最近的心跳（前后30秒范围内）
-      let closestHeartbeat: KumaHeartbeat | null = null;
-      let minTimeDiff = Infinity;
-
-      heartbeats.forEach((h: KumaHeartbeat) => {
-        const hTime = dayjs(h.time).unix();
-        const timeDiff = Math.abs(hTime - minuteTimestamp);
-
-        // 只考虑前后30秒内的心跳
-        if (timeDiff <= 30 && timeDiff < minTimeDiff) {
-          minTimeDiff = timeDiff;
-          closestHeartbeat = h;
-        }
-      });
-
-      // 使用最近的心跳数据
-      let percent = 0;
-      let avgPing = 0;
-
-      if (closestHeartbeat) {
-        // 如果找到了心跳，使用其状态
-        percent = closestHeartbeat.status === 1 ? 100 : 0;
-        avgPing = closestHeartbeat.ping || 0;
-      }
+    recentHeartbeats.forEach((heartbeat: KumaHeartbeat) => {
+      // 计算可用率：UP=100%, DOWN=0%
+      const percent = heartbeat.status === 1 ? 100 : 0;
+      const ping = heartbeat.ping || 0;
 
       minuteRanges.push(percent.toFixed(2));
-      minutePings.push(Math.round(avgPing));
+      minutePings.push(Math.round(ping));
+      timePoints.push(dayjs(heartbeat.time).unix());
     });
 
     // 计算总可用率
@@ -145,7 +129,8 @@ export function convertKumaToUptimeRobot(
       type: TYPE_MAP[monitor.type?.toLowerCase()] || 1,
       interval: monitor.interval || 60,
       custom_uptime_ranges: minuteRanges.join("-"),
-      custom_uptime_pings: minutePings.join("-"), // 添加响应时间数据
+      custom_uptime_pings: minutePings.join("-"), // 响应时间数据
+      custom_uptime_times: timePoints.join("-"), // 真实时间戳
       logs: logs,
     });
   });
