@@ -232,12 +232,12 @@ watch(siteData, (newData, oldData) => {
       refreshingStates.value[site.id] = true;
       newHeartbeats.value[site.id] = site.days.length - 1;
 
-      // 600ms 后移除刷新状态
+      // 800ms 后移除刷新状态（与动画时长匹配）
       setTimeout(() => {
         refreshingStates.value[site.id] = false;
-      }, 600);
+      }, 800);
 
-      // 2000ms 后移除新心跳高亮
+      // 2000ms 后移除新心跳高亮（呼吸动画完成）
       setTimeout(() => {
         newHeartbeats.value[site.id] = -1;
       }, 2000);
@@ -317,12 +317,12 @@ onMounted(getSiteData);
     .timeline {
       margin: 15px 0 10px;
       position: relative;
-      will-change: transform;
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform, opacity;
+      transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
 
-      // 刷新时的左移动画
+      // 刷新时的左移动画 - 更细腻
       &.is-refreshing {
-        animation: slide-left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: slide-left 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
       }
 
       .minute {
@@ -330,18 +330,20 @@ onMounted(getSiteData);
         flex: 1;
         border-radius: 25px;
         background-color: var(--normal-color);
-        transition: transform 0.3s, box-shadow 0.3s;
-        transform-origin: bottom;
+        transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+                    box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+                    opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        transform-origin: center;
         cursor: pointer;
         position: relative;
 
         &:hover {
-          transform: scale(1.1);
+          transform: scale(1.08);
         }
 
-        // 新心跳高亮动画
+        // 新心跳呼吸动画 - Apple 风格
         &.is-new {
-          animation: pulse-glow 1.5s ease-out;
+          animation: breathe-in 2s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
       }
     }
@@ -415,37 +417,38 @@ onMounted(getSiteData);
   }
 }
 
-// 左移动画
+// 左移动画 - 更细腻的移动
 @keyframes slide-left {
   0% {
     transform: translateX(0);
+    opacity: 1;
   }
   100% {
-    transform: translateX(-2%);
+    transform: translateX(-0.8%);
+    opacity: 1;
   }
 }
 
-// 新心跳高亮动画
-@keyframes pulse-glow {
+// 新心跳呼吸动画 - Apple 风格（无回弹，单向流畅）
+@keyframes breathe-in {
   0% {
-    box-shadow: 0 0 0 0 currentColor;
-    transform: scale(1);
+    opacity: 0;
+    transform: scale(0.95);
+    filter: brightness(1);
   }
-  25% {
-    box-shadow: 0 0 20px 5px currentColor;
-    transform: scale(1.15);
-  }
-  50% {
-    box-shadow: 0 0 15px 3px currentColor;
-    transform: scale(1.1);
-  }
-  75% {
-    box-shadow: 0 0 10px 2px currentColor;
+  40% {
+    opacity: 1;
     transform: scale(1.05);
+    filter: brightness(1.35);
+  }
+  70% {
+    transform: scale(1.02);
+    filter: brightness(1.18);
   }
   100% {
-    box-shadow: 0 0 0 0 transparent;
+    opacity: 1;
     transform: scale(1);
+    filter: brightness(1);
   }
 }
 
