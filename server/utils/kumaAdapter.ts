@@ -65,6 +65,9 @@ export function convertKumaToUptimeRobot(
     const heartbeats: KumaHeartbeat[] =
       kumaHeartbeatData?.heartbeatList?.[monitorId] || [];
 
+    // 获取 URL - 尝试多个可能的字段
+    const monitorUrl = (monitor as any).url || (monitor as any).hostname || monitor.name;
+
     // 计算每分钟的可用率和响应时间
     const minuteRanges: string[] = [];
     const minutePings: number[] = []; // 保存每分钟的平均响应时间
@@ -131,7 +134,7 @@ export function convertKumaToUptimeRobot(
     monitors.push({
       id: monitor.id,
       friendly_name: monitor.name,
-      url: monitor.url || undefined, // 改为 undefined 而不是空字符串
+      url: monitorUrl || undefined, // 使用提取的 URL
       status: status,
       type: TYPE_MAP[monitor.type?.toLowerCase()] || 1,
       interval: monitor.interval || 60,
