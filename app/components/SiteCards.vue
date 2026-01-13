@@ -78,6 +78,10 @@
               <n-text class="date" depth="3">
                 {{ minute?.date ? formatTime(minute.date, { format: "HH:mm" }) : $t("card.unknownDate") }}
               </n-text>
+              <!-- 响应时间 -->
+              <n-text v-if="minute?.ping" depth="3" style="font-size: 12px; color: #999;">
+                {{ minute.ping }}ms
+              </n-text>
               <!-- 详细 -->
               <n-text v-if="minute?.percent >= 100">
                 {{ $t("card.percent", { percent: minute?.percent }) }}
