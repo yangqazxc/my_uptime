@@ -21,6 +21,7 @@ const siteConfig = {
 export default defineNuxtConfig({
   // modules
   modules: [
+    "@nuxtjs/i18n",
     "@pinia/nuxt",
     "@nuxt/eslint",
     "nuxtjs-naive-ui",
@@ -29,7 +30,6 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "@vueuse/nuxt",
     "nuxt-lodash",
-    "@nuxtjs/i18n",
   ].concat(siteConfig.platform === "cloudflare" ? "@nuxthub/core" : ""),
   // ssr
   ssr: false,
@@ -140,14 +140,15 @@ export default defineNuxtConfig({
   // i18n
   i18n: {
     locales: [
-      { code: "zh-CN", name: "简体中文" },
-      { code: "en", name: "English" },
-      { code: "ja-JP", name: "日本語" },
-      { code: "ko-KR", name: "한국어" },
+      { code: "zh-CN", name: "简体中文", file: "zh-CN.json" },
+      { code: "en", name: "English", file: "en-US.json" },
+      { code: "ja-JP", name: "日本語", file: "ja-JP.json" },
+      { code: "ko-KR", name: "한국어", file: "ko-KR.json" },
     ],
+    lazy: true,
+    langDir: "lang/locales",
     defaultLocale: "zh-CN",
     strategy: "no_prefix",
-    vueI18n: "./lang/i18n.config.ts",
   },
   // icon
   icon: {
