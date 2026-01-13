@@ -75,8 +75,8 @@ export function convertKumaToUptimeRobot(
     }
 
     // 直接使用真实心跳数据，取最近 N 条
-    // Kuma 返回的心跳是从新到旧排序的，需要反转为从旧到新
-    const recentHeartbeats = heartbeats.slice(0, heartbeatCount).reverse();
+    // Kuma 返回的心跳已经是从旧到新排序的，直接使用即可
+    const recentHeartbeats = heartbeats.slice(-heartbeatCount); // 取最后 N 条（最新的）
 
     // 为每条心跳生成数据
     const minuteRanges: string[] = [];
