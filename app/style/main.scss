@@ -1,0 +1,184 @@
+:root {
+  --main-bg-color: rgb(247, 247, 247);
+  --main-card-color: rgb(255, 255, 255);
+  --mian-border-color: rgba(255, 255, 255, 0.09);
+  --main-box-shadow: rgba(0, 0, 0, 0.1);
+  --cover-fill-color: 247, 247, 247;
+  // 背景
+  --loading-cover: radial-gradient(circle, #00c6ff, #0072ff, #00d2ff, #00b0ff);
+  --error-cover: radial-gradient(circle, #ff4b5c, #ff2a3b, #ff6f5e, #f15239);
+  --warn-cover: radial-gradient(circle, #ffa500, #ff8c00, #ff7f00, #ff6600);
+  --unknown-cover: radial-gradient(circle, #7f8c8d, #b5b5b5, #858c8d, #34495e);
+  --normal-cover: radial-gradient(circle, #2ecc71, #27ae60, #16a085, #1abc9c);
+  // 主颜色
+  --loading-color: #58d0ff;
+  --normal-color: #3bd672;
+  --error-color: #de484a;
+  --warn-color: #f39c12;
+  --unknown-color: #7f8c8d;
+  // 深色模式
+  &.dark-mode {
+    --main-bg-color: rgb(36, 36, 36);
+    --main-card-color: rgb(66, 66, 66);
+    --mian-border-color: rgba(0, 0, 0, 0.1);
+    --cover-fill-color: 36, 36, 36;
+    --cover-filter: brightness(80%);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  box-sizing: border-box;
+  -webkit-user-drag: none;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--main-bg-color);
+  overflow: hidden;
+}
+
+header[data-v-4ee25e26] {
+    height: 28vh !important;
+}
+
+@media (max-width: 768px) {
+  header[data-v-4ee25e26] {
+    height: 38vh !important;
+  }
+}
+
+// @media (max-width: 768px) {
+//   .site-cards .site-item .summary .date[data-v-5804a73a]:last-child {
+//     text-align: left !important;
+//   }
+// }
+
+/* =========================================
+   1. 手机端布局终极修复
+   ========================================= */
+@media (max-width: 768px) {
+  .summary {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 0 !important;
+  }
+
+  /* --- 元素1：日期 (左上) --- */
+  .summary > :nth-child(1) {
+    width: 50% !important;
+    text-align: left !important;
+    order: 1 !important; /* visual order: 1 */
+    white-space: nowrap !important;
+  }
+
+  /* --- 元素3：今日状态 (右上) --- */
+  /* 必须把这个写在日期后面，确保它和日期在同一行 */
+  .summary > :nth-child(3) {
+    width: 50% !important;
+    text-align: right !important;
+    order: 2 !important; /* visual order: 2 */
+    display: block !important;
+    margin-top: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* --- 元素2：60天统计/长文本 (下方) --- */
+  /* 把它挤到最后一行，占据 100% 宽度 */
+  .summary > :nth-child(2) {
+    width: 100% !important;
+    text-align: left !important;
+    order: 10 !important; /* visual order: last */
+    display: block !important;
+    margin-top: 8px !important;
+    line-height: 1.5;
+  }
+}
+/* =========================================
+   2. Footer 页脚样式 (含夜间模式适配)
+   ========================================= */
+
+/* 隐藏原footer内容，只显示自定义内容 */
+footer[data-v-536253a5] * {
+  display: none !important;
+}
+
+/* 电脑版本样式（默认背景） */
+footer[data-v-536253a5] {
+  height: 120px !important;
+  padding: 40px 20px 40px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background: #f8f8fa !important; /* 白天浅灰背景 */
+  box-sizing: border-box;
+  width: 100vw;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  transition: background 0.3s;
+}
+
+/* ★★★ 夜间模式适配 ★★★ */
+.dark-mode footer[data-v-536253a5] {
+  background: rgb(36, 36, 36) !important; /* 深色背景 */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 自定义文字内容 */
+footer[data-v-536253a5]::after {
+  content: "SiteStatus Version 2.0.0\A UptimeRobot 接口 | 检测频率 5 分钟";
+  white-space: pre-line;
+  color: rgb(189 189 189);
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.8;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  width: 100%;
+  display: block;
+}
+
+/* 手机版页脚微调 */
+@media (max-width: 768px) {
+  footer[data-v-536253a5] {
+    min-height: 120px !important;
+    padding: 24px 10px 60px !important;
+    margin-bottom: 60px !important;
+    font-size: 12px !important;
+  }
+  footer[data-v-536253a5]::after {
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgb(189 189 189);
+    font-weight: 400;
+    padding-bottom: 8px;
+  }
+}
+
+
+#nuxt-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.n-scrollbar {
+  .n-scrollbar-rail {
+    right: 0 !important;
+  }
+  .n-scrollbar-rail__scrollbar {
+    z-index: 9999 !important;
+  }
+}
+
+.n-back-top {
+  z-index: 9999;
+}
