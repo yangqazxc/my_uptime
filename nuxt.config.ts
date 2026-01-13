@@ -139,16 +139,17 @@ export default defineNuxtConfig({
   },
   // i18n
   i18n: {
+    lazy: false,
+    langDir: "lang/locales",
     locales: [
-      { code: "zh-CN", name: "简体中文" },
-      { code: "en-US", name: "English" },
-      { code: "ja-JP", name: "日本語" },
-      { code: "ko-KR", name: "한국어" },
+      { code: "zh-CN", file: "zh-CN.json", name: "简体中文" },
+      { code: "en-US", file: "en-US.json", name: "English" },
+      { code: "ja-JP", file: "ja-JP.json", name: "日本語" },
+      { code: "ko-KR", file: "ko-KR.json", name: "한국어" },
     ],
     defaultLocale: "zh-CN",
     strategy: "no_prefix",
     detectBrowserLanguage: false,
-    vueI18n: "./lang/i18n.config.ts",
   },
   // icon
   icon: {
