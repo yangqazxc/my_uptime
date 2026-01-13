@@ -115,8 +115,8 @@ const nextUpdateTime = computed(() => {
 const refresh = async () => {
   const lastUpdate = statusStore.siteData?.timestamp || 0;
   if (!lastUpdate) return;
-  // 小于 30 秒
-  if (Date.now() - lastUpdate < 30 * 1000) {
+  // 小于 10 秒
+  if (Date.now() - lastUpdate < 10 * 1000) {
     window.$message.warning(t("meta.fastTip"));
     return;
   }

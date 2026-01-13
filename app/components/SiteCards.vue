@@ -75,27 +75,35 @@
               />
             </template>
             <div class="minute-data">
-              <n-text class="date" depth="3">
+              <!-- 时间标题 -->
+              <n-text class="time-header" strong>
                 {{ minute?.date ? formatTime(minute.date, { format: "HH:mm" }) : $t("card.unknownDate") }}
               </n-text>
               <!-- 响应时间 -->
-              <n-text v-if="minute?.ping" depth="3" style="font-size: 12px; color: #999;">
-                {{ minute.ping }}ms
+              <n-flex v-if="minute?.ping" justify="space-between" align="center" class="data-row">
+                <n-text depth="3">响应时间</n-text>
+                <n-text strong style="color: var(--primary-color);">{{ minute.ping }}ms</n-text>
+              </n-flex>
+              <!-- 可用率 -->
+              <n-flex justify="space-between" align="center" class="data-row">
+                <n-text depth="3">可用率</n-text>
+                <n-text strong :style="{ color: minute?.percent >= 100 ? 'var(--success-color)' : minute?.percent > 0 ? 'var(--warning-color)' : 'var(--error-color)' }">
+                  {{ minute?.percent }}%
+                </n-text>
+              </n-flex>
+              <!-- 故障信息 -->
+              <n-flex v-if="minute?.percent > 0 && minute?.percent < 100 && minute?.down?.times > 0" justify="space-between" align="center" class="data-row">
+                <n-text depth="3">故障次数</n-text>
+                <n-text>{{ minute?.down?.times }} 次</n-text>
+              </n-flex>
+              <n-flex v-if="minute?.percent > 0 && minute?.percent < 100 && minute?.down?.duration > 0" justify="space-between" align="center" class="data-row">
+                <n-text depth="3">故障时长</n-text>
+                <n-text>{{ formatDuration(minute?.down?.duration) }}</n-text>
+              </n-flex>
+              <!-- 无数据提示 -->
+              <n-text v-if="minute?.percent === 0" depth="3" style="text-align: center; padding: 8px 0;">
+                {{ $t("card.unknownData") }}
               </n-text>
-              <!-- 详细 -->
-              <n-text v-if="minute?.percent >= 100">
-                {{ $t("card.percent", { percent: minute?.percent }) }}
-              </n-text>
-              <n-text v-else-if="minute?.percent > 0 && minute?.percent < 100">
-                {{
-                  $t("card.percentData", {
-                    times: minute?.down?.times,
-                    duration: formatDuration(minute?.down?.duration),
-                    percent: minute?.percent,
-                  })
-                }}
-              </n-text>
-              <n-text v-else>{{ $t("card.unknownData") }}</n-text>
             </div>
           </n-popover>
         </n-flex>
@@ -301,8 +309,19 @@ onMounted(getSiteData);
 .minute-data {
   display: flex;
   flex-direction: column;
-  .date {
-    font-size: 12px;
+  gap: 8px;
+  min-width: 180px;
+  padding: 4px 0;
+  .time-header {
+    font-size: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--n-divider-color);
+    margin-bottom: 4px;
+  }
+  .data-row {
+    padding: 4px 0;
+    font-size: 13px;
   }
 }
+
 </style>
