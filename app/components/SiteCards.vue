@@ -75,33 +75,33 @@
               />
             </template>
             <div class="minute-data">
-              <!-- 时间标题 -->
+              <!-- 时间标题 - 添加日期 -->
               <n-text class="time-header" strong>
-                {{ minute?.date ? formatTime(minute.date, { format: "HH:mm" }) : $t("card.unknownDate") }}
+                {{ minute?.date ? formatTime(minute.date, { showTime: true }) : $t("card.unknownDate") }}
               </n-text>
               <!-- 响应时间 -->
               <n-flex v-if="minute?.ping" justify="space-between" align="center" class="data-row">
-                <n-text depth="3">响应时间</n-text>
-                <n-text strong style="color: var(--primary-color);">{{ minute.ping }}ms</n-text>
+                <n-text depth="3" class="label">响应时间</n-text>
+                <n-text strong class="value ping">{{ minute.ping }}ms</n-text>
               </n-flex>
               <!-- 可用率 -->
               <n-flex justify="space-between" align="center" class="data-row">
-                <n-text depth="3">可用率</n-text>
-                <n-text strong :style="{ color: minute?.percent >= 100 ? 'var(--success-color)' : minute?.percent > 0 ? 'var(--warning-color)' : 'var(--error-color)' }">
+                <n-text depth="3" class="label">可用率</n-text>
+                <n-text strong class="value" :class="getPercentClass(minute?.percent)">
                   {{ minute?.percent }}%
                 </n-text>
               </n-flex>
               <!-- 故障信息 -->
               <n-flex v-if="minute?.percent > 0 && minute?.percent < 100 && minute?.down?.times > 0" justify="space-between" align="center" class="data-row">
-                <n-text depth="3">故障次数</n-text>
-                <n-text>{{ minute?.down?.times }} 次</n-text>
+                <n-text depth="3" class="label">故障次数</n-text>
+                <n-text class="value">{{ minute?.down?.times }} 次</n-text>
               </n-flex>
               <n-flex v-if="minute?.percent > 0 && minute?.percent < 100 && minute?.down?.duration > 0" justify="space-between" align="center" class="data-row">
-                <n-text depth="3">故障时长</n-text>
-                <n-text>{{ formatDuration(minute?.down?.duration) }}</n-text>
+                <n-text depth="3" class="label">故障时长</n-text>
+                <n-text class="value">{{ formatDuration(minute?.down?.duration) }}</n-text>
               </n-flex>
               <!-- 无数据提示 -->
-              <n-text v-if="minute?.percent === 0" depth="3" style="text-align: center; padding: 8px 0;">
+              <n-text v-if="minute?.percent === 0" depth="3" class="no-data">
                 {{ $t("card.unknownData") }}
               </n-text>
             </div>
@@ -195,6 +195,13 @@ const getMinuteStatus = (percent: number): SiteType => {
   else if (percent >= 50 && percent < 100) return "warn";
   else if (percent > 0 && percent < 50) return "error";
   else return "unknown";
+};
+
+// 获取可用率颜色类名
+const getPercentClass = (percent: number): string => {
+  if (percent >= 100) return "success";
+  else if (percent > 0) return "warning";
+  else return "error";
 };
 
 // 重试
@@ -309,18 +316,42 @@ onMounted(getSiteData);
 .minute-data {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 180px;
-  padding: 4px 0;
+  gap: 4px;
+  min-width: 160px;
+  padding: 2px 0;
   .time-header {
-    font-size: 14px;
-    padding-bottom: 8px;
+    font-size: 13px;
+    padding-bottom: 6px;
     border-bottom: 1px solid var(--n-divider-color);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    text-align: center;
   }
   .data-row {
+    padding: 2px 0;
+    font-size: 12px;
+    .label {
+      font-size: 12px;
+    }
+    .value {
+      font-size: 12px;
+      &.ping {
+        color: #18a058;
+      }
+      &.success {
+        color: #18a058;
+      }
+      &.warning {
+        color: #f0a020;
+      }
+      &.error {
+        color: #d03050;
+      }
+    }
+  }
+  .no-data {
+    text-align: center;
     padding: 4px 0;
-    font-size: 13px;
+    font-size: 12px;
   }
 }
 
