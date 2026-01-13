@@ -149,6 +149,9 @@ export default defineNuxtConfig({
     langDir: "locales",
     defaultLocale: "zh-CN",
     strategy: "no_prefix",
+    compilation: {
+      strictMessage: false,
+    },
   },
   // icon
   icon: {
