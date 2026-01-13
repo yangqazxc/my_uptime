@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-
-// 启用 UTC 和时区插件
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 /**
  * Uptime Kuma 数据适配器
@@ -94,8 +88,9 @@ export function convertKumaToUptimeRobot(
       const percent = heartbeat.status === 1 ? 100 : 0;
       const ping = heartbeat.ping || 0;
 
-      // 解析 Kuma 时间（假设为 UTC 时间，转换为本地时间戳）
-      const timestamp = dayjs.utc(heartbeat.time).local().unix();
+      // 直接解析 Kuma 时间为时间戳
+      // Kuma 返回的时间格式: "2026-01-13 09:12:56.467"
+      const timestamp = dayjs(heartbeat.time).unix();
 
       minuteRanges.push(percent.toFixed(2));
       minutePings.push(Math.round(ping));
