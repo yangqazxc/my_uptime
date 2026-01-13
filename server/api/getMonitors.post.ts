@@ -15,8 +15,8 @@ const getRanges = ():
     const config = useRuntimeConfig();
     const countMinutes = config.public.countDays; // 复用配置，但现在表示分钟数
     const now = dayjs();
-    // 生成分钟范围数组（过去 N 分钟）
-    for (let m = 0; m < countMinutes; m++) {
+    // 生成分钟范围数组（过去 N 分钟，从1分钟前开始，避免当前未完成的分钟）
+    for (let m = 1; m <= countMinutes; m++) {
       minutes.push(now.subtract(m, "minute"));
     }
     return { minutes };
