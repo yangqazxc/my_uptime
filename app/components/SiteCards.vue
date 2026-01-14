@@ -247,10 +247,11 @@ watch(siteData, (newData, oldData) => {
         refreshingStates.value[site.id] = false;
       }, totalWaveTime);
 
-      // 2000ms 后移除新心跳高亮（呼吸动画完成）
+      // 等待所有动画完成后移除新心跳高亮
+      // 1.8s(呼吸) + 0.6s*3(脉搏) + 0.2s(缓冲) = 3.8s
       setTimeout(() => {
         newHeartbeats.value[site.id] = -1;
-      }, 2000);
+      }, 3800);
     }
 
     // 更新存储的时间戳
