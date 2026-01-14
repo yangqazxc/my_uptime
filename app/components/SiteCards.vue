@@ -309,9 +309,21 @@ onMounted(() => {
   margin: 30px auto 20px;
   padding: 0 20px;
 
-  // 滚动时暂停所有动画 - 优化手机端性能
+  // 滚动时暂停所有动画并移除消耗性能的属性 - 优化手机端性能
   &.is-scrolling {
-    * {
+    *,
+    *::before,
+    *::after {
+      animation-play-state: paused !important;
+    }
+
+    // 移除消耗性能的 filter 和 box-shadow
+    .minute {
+      filter: none !important;
+      box-shadow: none !important;
+    }
+
+    .point::after {
       animation-play-state: paused !important;
     }
   }
