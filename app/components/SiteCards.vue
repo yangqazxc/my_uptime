@@ -71,6 +71,8 @@
                 :style="{
                   backgroundColor: `var(--${getMinuteStatus(minute.percent)}-color)`,
                   '--wave-delay': `${(site.days.length - minuteIndex - 1) * 0.04}s`,
+                  '--wave-intensity': `${1 - (site.days.length - minuteIndex - 1) / site.days.length}`,
+                  '--status-color': `var(--${getMinuteStatus(minute.percent)}-color)`,
                 }"
                 :class="[
                   'minute',
@@ -351,7 +353,8 @@ onMounted(getSiteData);
 
         // 新心跳垂直呼吸动画 - 精致的上下形变
         &.is-new {
-          animation: breathe-vertical 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: breathe-vertical 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+                     breathe-pulse 0.6s ease-in-out 2s 3;
         }
 
         // 波浪流动效果 - 从新颗粒左侧第一个开始
@@ -441,7 +444,7 @@ onMounted(getSiteData);
   }
 }
 
-// 单个颗粒波浪流动动画 - 低调优雅的组合效果
+// 单个颗粒波浪流动动画 - 低调优雅 + 强度渐变
 @keyframes wave-flow-left {
   0% {
     transform: translateX(0) scaleY(1);
@@ -449,9 +452,9 @@ onMounted(getSiteData);
     box-shadow: 0 0 0 rgba(24, 160, 88, 0);
   }
   50% {
-    transform: translateX(-6px) scaleY(1.04);
-    filter: brightness(1.18);
-    box-shadow: 0 0 10px rgba(24, 160, 88, 0.4);
+    transform: translateX(calc(-6px * var(--wave-intensity))) scaleY(calc(1 + 0.04 * var(--wave-intensity)));
+    filter: brightness(calc(1 + 0.18 * var(--wave-intensity)));
+    box-shadow: 0 0 calc(10px * var(--wave-intensity)) rgba(24, 160, 88, calc(0.4 * var(--wave-intensity)));
   }
   100% {
     transform: translateX(0) scaleY(1);
@@ -460,7 +463,7 @@ onMounted(getSiteData);
   }
 }
 
-// 新心跳垂直呼吸动画 - 精致的上下形变
+// 新心跳垂直呼吸动画 - 精致的上下形变 + 传递效果
 @keyframes breathe-vertical {
   0% {
     opacity: 0;
@@ -484,11 +487,28 @@ onMounted(getSiteData);
     filter: brightness(1.12) blur(0);
     box-shadow: 0 0 4px rgba(24, 160, 88, 0.2);
   }
+  90% {
+    transform: scaleY(1.02) scaleX(1) translateX(-2px);
+    filter: brightness(1.08);
+    box-shadow: -2px 0 6px rgba(24, 160, 88, 0.3);
+  }
   100% {
     opacity: 1;
-    transform: scaleY(1) scaleX(1);
-    filter: brightness(1) blur(0);
-    box-shadow: 0 0 0 rgba(24, 160, 88, 0);
+    transform: scaleY(1) scaleX(1) translateX(0);
+    filter: brightness(1.05);
+    box-shadow: 0 0 3px rgba(24, 160, 88, 0.15);
+  }
+}
+
+// 新颗粒余韵脉搏 - 呼吸完成后的微弱脉动
+@keyframes breathe-pulse {
+  0%, 100% {
+    filter: brightness(1.05);
+    box-shadow: 0 0 3px rgba(24, 160, 88, 0.15);
+  }
+  50% {
+    filter: brightness(1.1);
+    box-shadow: 0 0 6px rgba(24, 160, 88, 0.25);
   }
 }
 
