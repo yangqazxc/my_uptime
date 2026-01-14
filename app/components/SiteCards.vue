@@ -1,7 +1,7 @@
 <!-- 站点数据卡片 -->
 <template>
   <Transition name="fade" mode="out-in">
-    <div v-if="!isEmpty(siteData)" class="site-cards" :class="{ 'is-scrolling': isScrolling }">
+    <div v-if="!isEmpty(siteData)" class="site-cards">
       <n-card
         v-for="(site, index) in siteData"
         :key="index"
@@ -216,10 +216,6 @@ const refreshingStates = ref<Record<number, boolean>>({});
 const newHeartbeats = ref<Record<number, number>>({});
 const previousData = ref<Record<number, number>>({}); // 存储每个站点最后一条心跳的时间戳
 
-// 滚动状态 - 用于暂停动画优化性能
-const isScrolling = ref(false);
-let scrollTimer: NodeJS.Timeout | null = null;
-
 // 判断是否为新心跳
 const isNewHeartbeat = (siteId: number, index: number): boolean => {
   const site = siteData.value?.find(s => s.id === siteId);
@@ -272,32 +268,7 @@ const refresh = async () => {
   await getSiteData();
 };
 
-onMounted(() => {
-  getSiteData();
-
-  // 监听滚动事件 - 滚动时暂停动画优化性能
-  const handleScroll = () => {
-    isScrolling.value = true;
-
-    if (scrollTimer) {
-      clearTimeout(scrollTimer);
-    }
-
-    scrollTimer = setTimeout(() => {
-      isScrolling.value = false;
-    }, 150);
-  };
-
-  window.addEventListener('scroll', handleScroll, { passive: true });
-
-  // 清理
-  onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
-    if (scrollTimer) {
-      clearTimeout(scrollTimer);
-    }
-  });
-});
+onMounted(getSiteData);
 </script>
 
 <style lang="scss" scoped>
@@ -308,26 +279,6 @@ onMounted(() => {
   max-width: 900px;
   margin: 30px auto 20px;
   padding: 0 20px;
-
-  // 滚动时暂停所有动画并移除消耗性能的属性 - 优化手机端性能
-  &.is-scrolling {
-    *,
-    *::before,
-    *::after {
-      animation-play-state: paused !important;
-    }
-
-    // 移除消耗性能的 filter 和 box-shadow
-    .minute {
-      filter: none !important;
-      box-shadow: none !important;
-    }
-
-    .point::after {
-      animation-play-state: paused !important;
-    }
-  }
-
   .site-item {
     opacity: 0;
     border-radius: 12px;
