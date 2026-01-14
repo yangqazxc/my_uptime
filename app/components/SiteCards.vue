@@ -237,10 +237,13 @@ watch(siteData, (newData, oldData) => {
       refreshingStates.value[site.id] = true;
       newHeartbeats.value[site.id] = site.days.length - 1;
 
-      // 800ms 后移除刷新状态（与动画时长匹配）
+      // 计算波浪动画总时长：1.8s(呼吸) + 0.04s*颗粒数(波浪延迟) + 0.8s(单个波浪动画)
+      const totalWaveTime = 1800 + (site.days.length * 40) + 800;
+
+      // 波浪动画完成后移除刷新状态
       setTimeout(() => {
         refreshingStates.value[site.id] = false;
-      }, 800);
+      }, totalWaveTime);
 
       // 2000ms 后移除新心跳高亮（呼吸动画完成）
       setTimeout(() => {
@@ -353,8 +356,14 @@ onMounted(getSiteData);
 
         // 波浪流动效果 - 从右到左依次触发
         &.wave-flow {
-          animation: wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
           animation-delay: calc(1.8s + var(--wave-delay));
+
+          // 确保波浪动画不被 hover 覆盖
+          &:hover {
+            animation: wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+            animation-delay: calc(1.8s + var(--wave-delay));
+          }
         }
       }
     }
