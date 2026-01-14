@@ -75,7 +75,7 @@
                 :class="[
                   'minute',
                   { 'is-new': isNewHeartbeat(site.id, minuteIndex) },
-                  { 'wave-flow': refreshingStates[site.id] }
+                  { 'wave-flow': refreshingStates[site.id] && !isNewHeartbeat(site.id, minuteIndex) }
                 ]"
               />
             </template>
@@ -354,23 +354,10 @@ onMounted(getSiteData);
           animation: breathe-vertical 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        // 波浪流动效果 - 从右到左依次触发
+        // 波浪流动效果 - 从新颗粒左侧第一个开始
         &.wave-flow {
           animation: wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
           animation-delay: calc(1.8s + var(--wave-delay));
-
-          // 新颗粒需要先完成呼吸动画，再参与波浪
-          &.is-new {
-            animation: breathe-vertical 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards,
-                       wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
-            animation-delay: 0s, calc(1.8s + var(--wave-delay));
-          }
-
-          // 确保波浪动画不被 hover 覆盖
-          &:hover {
-            animation: wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
-            animation-delay: calc(1.8s + var(--wave-delay));
-          }
         }
       }
     }
