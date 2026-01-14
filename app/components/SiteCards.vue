@@ -438,19 +438,23 @@ onMounted(getSiteData);
   }
 }
 
-// 单个颗粒波浪流动动画 - 从右到左依次触发
+// 单个颗粒波浪流动动画 - 组合效果（亮度+阴影+形变）
 @keyframes wave-flow-left {
   0% {
-    transform: translateX(0) scaleX(1);
+    transform: translateX(0) scaleY(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 rgba(24, 160, 88, 0);
   }
-  30% {
-    transform: translateX(-6px) scaleX(0.95);
-  }
-  60% {
-    transform: translateX(-10px) scaleX(1.02);
+  50% {
+    transform: translateX(-8px) scaleY(1.08);
+    filter: brightness(1.35);
+    box-shadow: 0 0 16px rgba(24, 160, 88, 0.7),
+                0 0 8px rgba(24, 160, 88, 0.5) inset;
   }
   100% {
-    transform: translateX(0) scaleX(1);
+    transform: translateX(0) scaleY(1);
+    filter: brightness(1);
+    box-shadow: 0 0 0 rgba(24, 160, 88, 0);
   }
 }
 
