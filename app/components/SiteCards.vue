@@ -317,12 +317,11 @@ onMounted(getSiteData);
     .timeline {
       margin: 15px 0 10px;
       position: relative;
-      will-change: transform, opacity;
-      transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+      will-change: transform;
 
-      // 刷新时的左移动画 - 更细腻
+      // 刷新时的整体左移流动动画 - 延迟执行，等待新颗粒呼吸完成
       &.is-refreshing {
-        animation: slide-left 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+        animation: slide-left-flow 1.2s cubic-bezier(0.4, 0, 0.2, 1) 1.8s forwards;
       }
 
       .minute {
@@ -330,20 +329,21 @@ onMounted(getSiteData);
         flex: 1;
         border-radius: 25px;
         background-color: var(--normal-color);
-        transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-                    box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-                    opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         transform-origin: center;
         cursor: pointer;
         position: relative;
+        will-change: transform, filter, box-shadow;
 
         &:hover {
-          transform: scale(1.08);
+          transform: scaleY(1.12) scaleX(1);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
-        // 新心跳呼吸动画 - Apple 风格
+        // 新心跳垂直呼吸动画 - 精致的上下形变
         &.is-new {
-          animation: breathe-in 2s cubic-bezier(0.25, 0.1, 0.25, 1);
+          animation: breathe-vertical 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
       }
     }
@@ -417,38 +417,45 @@ onMounted(getSiteData);
   }
 }
 
-// 左移动画 - 更细腻的移动
-@keyframes slide-left {
+// 整体左移流动动画 - 所有颗粒向左挤压
+@keyframes slide-left-flow {
   0% {
     transform: translateX(0);
-    opacity: 1;
   }
   100% {
-    transform: translateX(-0.8%);
-    opacity: 1;
+    transform: translateX(-2%);
   }
 }
 
-// 新心跳呼吸动画 - Apple 风格（无回弹，单向流畅）
-@keyframes breathe-in {
+// 新心跳垂直呼吸动画 - 精致的上下形变
+@keyframes breathe-vertical {
   0% {
     opacity: 0;
-    transform: scale(0.95);
-    filter: brightness(1);
+    transform: scaleY(0.75) scaleX(1);
+    filter: brightness(1) blur(0.5px);
+    box-shadow: 0 0 0 rgba(24, 160, 88, 0);
   }
-  40% {
+  25% {
     opacity: 1;
-    transform: scale(1.05);
-    filter: brightness(1.35);
+    transform: scaleY(1.15) scaleX(1);
+    filter: brightness(1.45) blur(0);
+    box-shadow: 0 0 12px rgba(24, 160, 88, 0.6);
   }
-  70% {
-    transform: scale(1.02);
-    filter: brightness(1.18);
+  50% {
+    transform: scaleY(0.92) scaleX(1);
+    filter: brightness(1.25) blur(0);
+    box-shadow: 0 0 8px rgba(24, 160, 88, 0.4);
+  }
+  75% {
+    transform: scaleY(1.05) scaleX(1);
+    filter: brightness(1.12) blur(0);
+    box-shadow: 0 0 4px rgba(24, 160, 88, 0.2);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
-    filter: brightness(1);
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1) blur(0);
+    box-shadow: 0 0 0 rgba(24, 160, 88, 0);
   }
 }
 
