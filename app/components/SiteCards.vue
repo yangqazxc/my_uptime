@@ -71,7 +71,7 @@
                 :style="{
                   backgroundColor: `var(--${getMinuteStatus(minute.percent)}-color)`,
                   '--wave-delay': `${(site.days.length - minuteIndex - 1) * 0.04}s`,
-                  '--wave-intensity': `${1 - (site.days.length - minuteIndex - 1) / site.days.length}`,
+                  '--wave-intensity': `${Math.sqrt(1 - (site.days.length - minuteIndex - 1) / site.days.length)}`,
                   '--status-color': `var(--${getMinuteStatus(minute.percent)}-color)`,
                 }"
                 :class="[
