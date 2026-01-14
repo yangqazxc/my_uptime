@@ -359,6 +359,13 @@ onMounted(getSiteData);
           animation: wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
           animation-delay: calc(1.8s + var(--wave-delay));
 
+          // 新颗粒需要先完成呼吸动画，再参与波浪
+          &.is-new {
+            animation: breathe-vertical 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+                       wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+            animation-delay: 0s, calc(1.8s + var(--wave-delay));
+          }
+
           // 确保波浪动画不被 hover 覆盖
           &:hover {
             animation: wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
@@ -447,7 +454,7 @@ onMounted(getSiteData);
   }
 }
 
-// 单个颗粒波浪流动动画 - 组合效果（亮度+阴影+形变）
+// 单个颗粒波浪流动动画 - 低调优雅的组合效果
 @keyframes wave-flow-left {
   0% {
     transform: translateX(0) scaleY(1);
@@ -455,10 +462,9 @@ onMounted(getSiteData);
     box-shadow: 0 0 0 rgba(24, 160, 88, 0);
   }
   50% {
-    transform: translateX(-8px) scaleY(1.08);
-    filter: brightness(1.35);
-    box-shadow: 0 0 16px rgba(24, 160, 88, 0.7),
-                0 0 8px rgba(24, 160, 88, 0.5) inset;
+    transform: translateX(-6px) scaleY(1.04);
+    filter: brightness(1.18);
+    box-shadow: 0 0 10px rgba(24, 160, 88, 0.4);
   }
   100% {
     transform: translateX(0) scaleY(1);
