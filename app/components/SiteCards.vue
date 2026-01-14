@@ -70,8 +70,13 @@
               <div
                 :style="{
                   backgroundColor: `var(--${getMinuteStatus(minute.percent)}-color)`,
+                  '--wave-delay': `${(site.days.length - minuteIndex - 1) * 0.04}s`,
                 }"
-                :class="['minute', { 'is-new': isNewHeartbeat(site.id, minuteIndex) }]"
+                :class="[
+                  'minute',
+                  { 'is-new': isNewHeartbeat(site.id, minuteIndex) },
+                  { 'wave-flow': refreshingStates[site.id] }
+                ]"
               />
             </template>
             <div class="minute-data">
@@ -319,9 +324,9 @@ onMounted(getSiteData);
       position: relative;
       will-change: transform;
 
-      // 刷新时的整体左移流动动画 - 延迟执行，等待新颗粒呼吸完成
+      // 移除整体刷新动画，改用单个颗粒波浪
       &.is-refreshing {
-        animation: slide-left-flow 1.2s cubic-bezier(0.4, 0, 0.2, 1) 1.8s forwards;
+        // 不再需要整体动画
       }
 
       .minute {
@@ -344,6 +349,12 @@ onMounted(getSiteData);
         // 新心跳垂直呼吸动画 - 精致的上下形变
         &.is-new {
           animation: breathe-vertical 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        // 波浪流动效果 - 从右到左依次触发
+        &.wave-flow {
+          animation: wave-flow-left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          animation-delay: calc(1.8s + var(--wave-delay));
         }
       }
     }
@@ -417,13 +428,29 @@ onMounted(getSiteData);
   }
 }
 
-// 整体左移流动动画 - 所有颗粒向左挤压
+// 整体左移流动动画 - 已废弃，改用单个颗粒波浪流动
 @keyframes slide-left-flow {
   0% {
     transform: translateX(0);
   }
   100% {
     transform: translateX(-2%);
+  }
+}
+
+// 单个颗粒波浪流动动画 - 从右到左依次触发
+@keyframes wave-flow-left {
+  0% {
+    transform: translateX(0) scaleX(1);
+  }
+  30% {
+    transform: translateX(-6px) scaleX(0.95);
+  }
+  60% {
+    transform: translateX(-10px) scaleX(1.02);
+  }
+  100% {
+    transform: translateX(0) scaleX(1);
   }
 }
 
