@@ -454,7 +454,7 @@ onMounted(getSiteData);
   }
   50% {
     transform: translateX(calc(-6px * var(--wave-intensity))) scaleY(calc(1 + 0.04 * var(--wave-intensity)));
-    filter: brightness(calc(1 + 0.18 * var(--wave-intensity)));
+    filter: brightness(calc(1 + 0.12 * var(--wave-intensity)));
     box-shadow: 0 0 calc(10px * var(--wave-intensity)) rgba(24, 160, 88, calc(0.4 * var(--wave-intensity)));
   }
   100% {
