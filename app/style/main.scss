@@ -39,17 +39,14 @@ body {
   height: 100%;
   background-color: var(--main-bg-color);
   overflow: hidden;
-  /* iOS Safari 修复 */
-  -webkit-text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
 }
 
-header[data-v-0504e153] {
+header[data-v-4ee25e26] {
     height: 28vh !important;
 }
 
 @media (max-width: 768px) {
-  header[data-v-0504e153] {
+  header[data-v-4ee25e26] {
     height: 38vh !important;
   }
 }
@@ -153,10 +150,8 @@ footer[data-v-536253a5]::after {
 @media (max-width: 768px) {
   footer[data-v-536253a5] {
     min-height: 120px !important;
-    padding: 24px 10px 40px !important;
-    /* iOS 安全区域适配，安卓设备上 env() 值为 0，不影响显示 */
-    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)) !important;
-    margin-bottom: 0 !important;
+    padding: 24px 10px 60px !important;
+    margin-bottom: 60px !important;
     font-size: 12px !important;
   }
   footer[data-v-536253a5]::after {
