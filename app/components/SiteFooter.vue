@@ -61,7 +61,7 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 20px 40px;
+  padding: 60px 20px 90px;
   margin-top: auto;
   z-index: 100;
   .text {
@@ -79,13 +79,6 @@ footer {
         color: var(--normal-color);
       }
     }
-  }
-
-  // iOS 移动端适配 - 修复底部空白
-  @media (max-width: 768px) {
-    padding: 40px 20px 20px;
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
-    margin-bottom: 0;
   }
 }
 </style>
