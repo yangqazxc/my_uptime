@@ -39,14 +39,17 @@ body {
   height: 100%;
   background-color: var(--main-bg-color);
   overflow: hidden;
+  /* iOS Safari 修复 */
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
-header[data-v-910cab2e] {
+header[data-v-4ee25e26] {
     height: 28vh !important;
 }
 
 @media (max-width: 768px) {
-  header[data-v-910cab2e] {
+  header[data-v-4ee25e26] {
     height: 38vh !important;
   }
 }
@@ -150,8 +153,9 @@ footer[data-v-536253a5]::after {
 @media (max-width: 768px) {
   footer[data-v-536253a5] {
     min-height: 120px !important;
-    padding: 24px 10px 60px !important;
-    margin-bottom: 60px !important;
+    padding: 24px 10px 40px !important;
+    padding-bottom: calc(40px + env(safe-area-inset-bottom)) !important;
+    margin-bottom: 0 !important;
     font-size: 12px !important;
   }
   footer[data-v-536253a5]::after {
