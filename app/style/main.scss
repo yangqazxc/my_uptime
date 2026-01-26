@@ -39,9 +39,6 @@ body {
   height: 100%;
   background-color: var(--main-bg-color);
   overflow: hidden;
-  // iOS 移动端适配
-  -webkit-overflow-scrolling: touch;
-  -webkit-text-size-adjust: 100%;
 }
 
 header[data-v-4ee25e26] {
@@ -104,26 +101,67 @@ header[data-v-4ee25e26] {
   }
 }
 /* =========================================
-   2. iOS 移动端全局适配
+   2. Footer 页脚样式 (含夜间模式适配)
    ========================================= */
 
-/* iOS 安全区域适配 */
-@supports (padding: max(0px)) {
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+/* 隐藏原footer内容，只显示自定义内容 */
+footer[data-v-536253a5] * {
+  display: none !important;
 }
 
-/* 防止 iOS 缩放 */
+/* 电脑版本样式（默认背景） */
+footer[data-v-536253a5] {
+  height: 120px !important;
+  padding: 40px 20px 40px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background: #f8f8fa !important; /* 白天浅灰背景 */
+  box-sizing: border-box;
+  width: 100vw;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  transition: background 0.3s;
+}
+
+/* ★★★ 夜间模式适配 ★★★ */
+.dark-mode footer[data-v-536253a5] {
+  background: rgb(36, 36, 36) !important; /* 深色背景 */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 自定义文字内容 */
+footer[data-v-536253a5]::after {
+  content: "SiteStatus Version 2.0.0\A UptimeRobot 接口 | 检测频率 5 分钟";
+  white-space: pre-line;
+  color: rgb(189 189 189);
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.8;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  width: 100%;
+  display: block;
+}
+
+/* 手机版页脚微调 */
 @media (max-width: 768px) {
-  input, textarea, select {
-    font-size: 16px !important; // 防止 iOS 自动缩放
+  footer[data-v-536253a5] {
+    min-height: 120px !important;
+    padding: 24px 10px 60px !important;
+    margin-bottom: 60px !important;
+    font-size: 12px !important;
+  }
+  footer[data-v-536253a5]::after {
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgb(189 189 189);
+    font-weight: 400;
+    padding-bottom: 8px;
   }
 }
-
-/* =========================================
-   3. Footer 页脚样式移除（已在组件中处理）
-   ========================================= */
 
 
 #nuxt-app {
