@@ -147,6 +147,7 @@ header {
   height: 44vh;
   width: 100%;
   color: white;
+  overflow: hidden; // 修复底部绿线问题
   .status-cover {
     position: absolute;
     top: 0;
@@ -177,6 +178,8 @@ header {
         display: flex;
         align-items: center;
         margin-bottom: 12px;
+        flex-wrap: wrap; // 允许换行
+        max-width: 100%; // 限制最大宽度
         .point {
           position: relative;
           width: 40px;
@@ -185,6 +188,7 @@ header {
           background-color: #fff;
           border-radius: 50%;
           margin-right: 30px;
+          flex-shrink: 0; // 防止圆点被压缩
           &::after {
             content: "";
             background-color: #ffffff80;
@@ -203,13 +207,17 @@ header {
         .text {
           display: flex;
           flex-direction: column;
+          flex: 1; // 占据剩余空间
+          min-width: 0; // 允许收缩
           .title {
             font-size: 40px;
             font-weight: bold;
+            word-break: break-word; // 允许单词断行
           }
           .tip {
             font-size: 14px;
             opacity: 0.8;
+            word-break: break-word; // 允许单词断行
             .n-button {
               --n-height: 22px;
               margin-left: 10px;
@@ -226,6 +234,52 @@ header {
             }
           }
         }
+
+        // 小屏幕适配
+        @media (max-width: 768px) {
+          padding: 0 10px;
+          margin-bottom: 20px;
+          .point {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            margin-right: 16px;
+          }
+          .text {
+            .title {
+              font-size: 28px; // 缩小标题字体
+              line-height: 1.2;
+            }
+            .tip {
+              font-size: 12px;
+              flex-wrap: wrap;
+              span {
+                display: inline-block;
+                &:first-child::after {
+                  margin: 0 4px;
+                }
+              }
+            }
+          }
+        }
+
+        // 超小屏幕适配
+        @media (max-width: 480px) {
+          .point {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            margin-right: 12px;
+          }
+          .text {
+            .title {
+              font-size: 24px; // 进一步缩小
+            }
+            .tip {
+              font-size: 11px;
+            }
+          }
+        }
       }
     }
   }
@@ -233,10 +287,11 @@ header {
     width: 100%;
     height: 60px;
     position: absolute;
-    bottom: 0;
+    bottom: -1px; // 修复底部绿线：向下偏移1px覆盖间隙
     left: 0;
     z-index: -1;
     pointer-events: none;
+    display: block; // 确保正确渲染
     @media (max-width: 512px) {
       height: 40px;
     }
