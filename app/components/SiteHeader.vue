@@ -203,19 +203,9 @@ header {
         .text {
           display: flex;
           flex-direction: column;
-          max-width: 100%;
-          overflow: hidden;
           .title {
             font-size: 40px;
             font-weight: bold;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            @media (max-width: 512px) {
-              font-size: 32px;
-            }
-            @media (max-width: 380px) {
-              font-size: 28px;
-            }
           }
           .tip {
             font-size: 14px;
@@ -243,14 +233,10 @@ header {
     width: 100%;
     height: 60px;
     position: absolute;
-    bottom: -1px;
+    bottom: 0;
     left: 0;
     z-index: -1;
     pointer-events: none;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
     @media (max-width: 512px) {
       height: 40px;
     }
