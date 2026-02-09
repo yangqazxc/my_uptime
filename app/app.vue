@@ -51,12 +51,12 @@ const checkSite = async () => {
   }
 };
 
-// 页面滚动
-const siteScroll = (e: Event) => {
-  // 滚动高度
+// 页面滚动（节流处理，避免频繁更新导致卡顿）
+const siteScrollRaw = (e: Event) => {
   const scrollTop = (e.target as HTMLElement).scrollTop;
   statusStore.scrollTop = scrollTop;
 };
+const siteScroll = useThrottleFn(siteScrollRaw, 50);
 
 // 更改站点语言
 const setSiteLang = (lang: string) => {
@@ -90,6 +90,14 @@ onBeforeMount(checkSite);
 
 onMounted(() => {
   setSiteLang(statusStore.siteLang);
+
+  // 为 n-scrollbar 内核容器添加 passive 滚动监听，提升移动端性能
+  nextTick(() => {
+    const scrollContainer = document.querySelector('.n-scrollbar-container');
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', siteScroll as EventListener, { passive: true });
+    }
+  });
 });
 </script>
 
