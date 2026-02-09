@@ -16,6 +16,7 @@
   --error-color: #de484a;
   --warn-color: #f39c12;
   --unknown-color: #7f8c8d;
+
   // 深色模式
   &.dark-mode {
     --main-bg-color: rgb(36, 36, 36);
@@ -41,12 +42,12 @@ body {
   overflow: hidden;
 }
 
-header[data-v-910cab2e] {
-    height: 28vh !important;
+header[data-v-4ee25e26] {
+  height: 28vh !important;
 }
 
 @media (max-width: 768px) {
-  header[data-v-910cab2e] {
+  header[data-v-4ee25e26] {
     height: 38vh !important;
   }
 }
@@ -71,19 +72,21 @@ header[data-v-910cab2e] {
   }
 
   /* --- 元素1：日期 (左上) --- */
-  .summary > :nth-child(1) {
+  .summary> :nth-child(1) {
     width: 50% !important;
     text-align: left !important;
-    order: 1 !important; /* visual order: 1 */
+    order: 1 !important;
+    /* visual order: 1 */
     white-space: nowrap !important;
   }
 
   /* --- 元素3：今日状态 (右上) --- */
   /* 必须把这个写在日期后面，确保它和日期在同一行 */
-  .summary > :nth-child(3) {
+  .summary> :nth-child(3) {
     width: 50% !important;
     text-align: right !important;
-    order: 2 !important; /* visual order: 2 */
+    order: 2 !important;
+    /* visual order: 2 */
     display: block !important;
     margin-top: 0 !important;
     white-space: nowrap !important;
@@ -91,15 +94,17 @@ header[data-v-910cab2e] {
 
   /* --- 元素2：60天统计/长文本 (下方) --- */
   /* 把它挤到最后一行，占据 100% 宽度 */
-  .summary > :nth-child(2) {
+  .summary> :nth-child(2) {
     width: 100% !important;
     text-align: left !important;
-    order: 10 !important; /* visual order: last */
+    order: 10 !important;
+    /* visual order: last */
     display: block !important;
     margin-top: 8px !important;
     line-height: 1.5;
   }
 }
+
 /* =========================================
    2. Footer 页脚样式 (含夜间模式适配)
    ========================================= */
@@ -117,7 +122,8 @@ footer[data-v-536253a5] {
   flex-direction: column !important;
   justify-content: center !important;
   align-items: center !important;
-  background: #f8f8fa !important; /* 白天浅灰背景 */
+  background: #f8f8fa !important;
+  /* 白天浅灰背景 */
   box-sizing: border-box;
   width: 100vw;
   left: 0;
@@ -128,7 +134,8 @@ footer[data-v-536253a5] {
 
 /* ★★★ 夜间模式适配 ★★★ */
 .dark-mode footer[data-v-536253a5] {
-  background: rgb(36, 36, 36) !important; /* 深色背景 */
+  background: rgb(36, 36, 36) !important;
+  /* 深色背景 */
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -154,6 +161,7 @@ footer[data-v-536253a5]::after {
     margin-bottom: 60px !important;
     font-size: 12px !important;
   }
+
   footer[data-v-536253a5]::after {
     font-size: 12px;
     line-height: 1.5;
@@ -174,8 +182,27 @@ footer[data-v-536253a5]::after {
   .n-scrollbar-rail {
     right: 0 !important;
   }
+
   .n-scrollbar-rail__scrollbar {
     z-index: 9999 !important;
+  }
+
+  // 移动端滚动性能优化
+  .n-scrollbar-container {
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain;
+  }
+}
+
+// 移动端全局性能优化
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  // 隐藏自定义滚动条轨道，提升触控滚动性能
+  .n-scrollbar .n-scrollbar-rail {
+    display: none !important;
   }
 }
 
