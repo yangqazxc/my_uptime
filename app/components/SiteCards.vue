@@ -62,57 +62,23 @@
           :class="['timeline', { 'is-refreshing': refreshingStates[site.id] }]"
           justify="space-between"
         >
-          <n-popover
+          <div
             v-for="(minute, minuteIndex) in site.days"
             :key="minute?.date || minuteIndex"
-          >
-            <template #trigger>
-              <div
-                :style="{
-                  backgroundColor: `var(--${getMinuteStatus(minute.percent)}-color)`,
-                  '--wave-delay': `${(site.days.length - minuteIndex - 1) * 0.04}s`,
-                  '--wave-intensity': `${Math.sqrt(1 - (site.days.length - minuteIndex - 1) / site.days.length)}`,
-                  '--status-color': `var(--${getMinuteStatus(minute.percent)}-color)`,
-                }"
-                :class="[
-                  'minute',
-                  { 'is-new': isNewHeartbeat(site.id, minuteIndex) },
-                  { 'wave-flow': refreshingStates[site.id] && !isNewHeartbeat(site.id, minuteIndex) }
-                ]"
-              />
-            </template>
-            <div class="minute-data">
-              <!-- 时间标题 - 添加日期 -->
-              <n-text class="time-header" strong>
-                {{ minute?.date ? formatTime(minute.date, { showTime: true }) : $t("card.unknownDate") }}
-              </n-text>
-              <!-- 响应时间 -->
-              <n-flex v-if="minute?.ping" justify="space-between" align="center" class="data-row">
-                <n-text depth="3" class="label">响应时间</n-text>
-                <n-text strong class="value ping">{{ minute.ping }}ms</n-text>
-              </n-flex>
-              <!-- 可用率 -->
-              <n-flex justify="space-between" align="center" class="data-row">
-                <n-text depth="3" class="label">可用率</n-text>
-                <n-text strong class="value" :class="getPercentClass(minute?.percent)">
-                  {{ minute?.percent }}%
-                </n-text>
-              </n-flex>
-              <!-- 故障信息 -->
-              <n-flex v-if="minute?.percent > 0 && minute?.percent < 100 && minute?.down?.times > 0" justify="space-between" align="center" class="data-row">
-                <n-text depth="3" class="label">故障次数</n-text>
-                <n-text class="value">{{ minute?.down?.times }} 次</n-text>
-              </n-flex>
-              <n-flex v-if="minute?.percent > 0 && minute?.percent < 100 && minute?.down?.duration > 0" justify="space-between" align="center" class="data-row">
-                <n-text depth="3" class="label">故障时长</n-text>
-                <n-text class="value">{{ formatDuration(minute?.down?.duration) }}</n-text>
-              </n-flex>
-              <!-- 无数据提示 -->
-              <n-text v-if="minute?.percent === 0" depth="3" class="no-data">
-                {{ $t("card.unknownData") }}
-              </n-text>
-            </div>
-          </n-popover>
+            :style="{
+              backgroundColor: `var(--${getMinuteStatus(minute.percent)}-color)`,
+              '--wave-delay': `${(site.days.length - minuteIndex - 1) * 0.04}s`,
+              '--wave-intensity': `${Math.sqrt(1 - (site.days.length - minuteIndex - 1) / site.days.length)}`,
+              '--status-color': `var(--${getMinuteStatus(minute.percent)}-color)`,
+            }"
+            :class="[
+              'minute',
+              { 'is-new': isNewHeartbeat(site.id, minuteIndex) },
+              { 'wave-flow': refreshingStates[site.id] && !isNewHeartbeat(site.id, minuteIndex) }
+            ]"
+            @mouseenter="onMinuteEnter($event, minute)"
+            @mouseleave="onMinuteLeave"
+          />
         </n-flex>
         <!-- 总结 -->
         <n-flex class="summary" justify="space-between">
@@ -140,6 +106,41 @@
           <n-text class="date" depth="3">{{ $t("meta.now") }}</n-text>
         </n-flex>
       </n-card>
+      <!-- 共享弹出层：用 1 个实例替代数百个 n-popover，大幅减少 DOM 和事件监听开销 -->
+      <n-popover
+        trigger="manual"
+        :show="showMinuteDetail"
+        :x="popoverX"
+        :y="popoverY"
+        placement="top"
+      >
+        <div v-if="activeMinute" class="minute-data">
+          <n-text class="time-header" strong>
+            {{ activeMinute?.date ? formatTime(activeMinute.date, { showTime: true }) : $t("card.unknownDate") }}
+          </n-text>
+          <n-flex v-if="activeMinute?.ping" justify="space-between" align="center" class="data-row">
+            <n-text depth="3" class="label">响应时间</n-text>
+            <n-text strong class="value ping">{{ activeMinute.ping }}ms</n-text>
+          </n-flex>
+          <n-flex justify="space-between" align="center" class="data-row">
+            <n-text depth="3" class="label">可用率</n-text>
+            <n-text strong class="value" :class="getPercentClass(activeMinute?.percent)">
+              {{ activeMinute?.percent }}%
+            </n-text>
+          </n-flex>
+          <n-flex v-if="activeMinute?.percent > 0 && activeMinute?.percent < 100 && activeMinute?.down?.times > 0" justify="space-between" align="center" class="data-row">
+            <n-text depth="3" class="label">故障次数</n-text>
+            <n-text class="value">{{ activeMinute?.down?.times }} 次</n-text>
+          </n-flex>
+          <n-flex v-if="activeMinute?.percent > 0 && activeMinute?.percent < 100 && activeMinute?.down?.duration > 0" justify="space-between" align="center" class="data-row">
+            <n-text depth="3" class="label">故障时长</n-text>
+            <n-text class="value">{{ formatDuration(activeMinute?.down?.duration) }}</n-text>
+          </n-flex>
+          <n-text v-if="activeMinute?.percent === 0" depth="3" class="no-data">
+            {{ $t("card.unknownData") }}
+          </n-text>
+        </div>
+      </n-popover>
     </div>
     <div
       v-else
@@ -168,7 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SiteStatusType, SiteType } from "~~/types/main";
+import type { SiteDaysStatus, SiteStatusType, SiteType } from "~~/types/main";
 
 const { t } = useI18n();
 const statusStore = useStatusStore();
@@ -277,6 +278,41 @@ const refresh = async () => {
   });
   await getSiteData();
 };
+
+// 共享弹出层状态（用 1 个实例替代数百个 n-popover，消除大量 DOM 和事件监听开销）
+const showMinuteDetail = ref(false);
+const popoverX = ref(0);
+const popoverY = ref(0);
+const activeMinute = ref<SiteDaysStatus | null>(null);
+let minuteLeaveTimer: ReturnType<typeof setTimeout> | null = null;
+
+const onMinuteEnter = (e: Event, minute: SiteDaysStatus) => {
+  if (minuteLeaveTimer) {
+    clearTimeout(minuteLeaveTimer);
+    minuteLeaveTimer = null;
+  }
+  const el = e.currentTarget as HTMLElement;
+  const rect = el.getBoundingClientRect();
+  popoverX.value = rect.left + rect.width / 2;
+  popoverY.value = rect.top;
+  activeMinute.value = minute;
+  showMinuteDetail.value = true;
+};
+
+const onMinuteLeave = () => {
+  minuteLeaveTimer = setTimeout(() => {
+    showMinuteDetail.value = false;
+    activeMinute.value = null;
+  }, 50);
+};
+
+// 滚动时隐藏弹出层（锚点已随内容移动）
+watch(() => statusStore.scrollTop, () => {
+  if (showMinuteDetail.value) {
+    showMinuteDetail.value = false;
+    activeMinute.value = null;
+  }
+});
 
 onMounted(getSiteData);
 </script>
