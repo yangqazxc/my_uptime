@@ -52,7 +52,7 @@ export default defineNuxtConfig({
         },
         {
           name: "viewport",
-          content: "width=device-width, initial-scale=1.0",
+          content: "width=device-width, initial-scale=1.0, viewport-fit=cover",
         },
         {
           name: "theme-color",
@@ -74,9 +74,9 @@ export default defineNuxtConfig({
         // manifest
         process.env.NODE_ENV !== "development"
           ? {
-              rel: "manifest",
-              href: "/manifest.webmanifest",
-            }
+            rel: "manifest",
+            href: "/manifest.webmanifest",
+          }
           : undefined,
       ],
       htmlAttrs: {
