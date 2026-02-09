@@ -284,6 +284,11 @@ onMounted(getSiteData);
     border-radius: 12px;
     animation: float-up 0.5s forwards;
     overflow: hidden;
+    // 移动端：使用 content-visibility 跳过离屏卡片的渲染，视觉效果不变
+    @media (max-width: 768px) {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 180px;
+    }
     .meta {
       .site-name {
         font-weight: bold;
@@ -328,7 +333,6 @@ onMounted(getSiteData);
     .timeline {
       margin: 15px 0 10px;
       position: relative;
-      will-change: transform;
 
       // 移除整体刷新动画，改用单个颗粒波浪
       &.is-refreshing {
@@ -345,7 +349,6 @@ onMounted(getSiteData);
         transform-origin: center;
         cursor: pointer;
         position: relative;
-        will-change: transform, filter, box-shadow;
 
         &:hover {
           transform: scaleY(1.12) scaleX(1);
@@ -364,6 +367,7 @@ onMounted(getSiteData);
           animation-delay: calc(1.8s + var(--wave-delay));
         }
       }
+
     }
     .summary {
       .date {
@@ -512,5 +516,7 @@ onMounted(getSiteData);
     box-shadow: 0 0 6px rgba(24, 160, 88, 0.25);
   }
 }
+
+
 
 </style>

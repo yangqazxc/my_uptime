@@ -244,7 +244,7 @@ header {
       > use {
         animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
         transition: fill 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: transform, fill;
+
       }
 
       > use:nth-child(1) {
