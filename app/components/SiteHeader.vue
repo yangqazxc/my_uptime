@@ -158,6 +158,9 @@ header {
     z-index: -1;
     transition: filter 0.3s;
     filter: var(--cover-filter);
+    // 创建独立合成层，让渐变背景动画不影响其他元素重绘
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   .status-content {
     display: flex;
@@ -237,6 +240,8 @@ header {
     left: 0;
     z-index: -1;
     pointer-events: none;
+    // 提升到 GPU 合成层，波纹动画不会触发主内容重绘
+    transform: translateZ(0);
     @media (max-width: 512px) {
       height: 40px;
     }

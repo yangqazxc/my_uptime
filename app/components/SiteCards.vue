@@ -223,8 +223,18 @@ const isNewHeartbeat = (siteId: number, index: number): boolean => {
   return index === site.days.length - 1 && newHeartbeats.value[siteId] === index;
 };
 
-// 监听数据变化，触发动画
-watch(siteData, (newData, oldData) => {
+// 提取每个站点的最新心跳时间戳作为监听键，避免整个数据数组的深度对比
+const latestTimestamps = computed(() => {
+  if (!siteData.value) return '';
+  return siteData.value.map(site => {
+    const last = site.days?.[site.days.length - 1];
+    return `${site.id}:${last?.date || 0}:${site.days?.length || 0}`;
+  }).join(',');
+});
+
+// 监听数据变化，触发动画（仅在时间戳变化时触发，而非深度对比整个数据）
+watch(latestTimestamps, () => {
+  const newData = siteData.value;
   if (!newData) return;
 
   newData.forEach(site => {
@@ -257,7 +267,7 @@ watch(siteData, (newData, oldData) => {
     // 更新存储的时间戳
     previousData.value[site.id] = lastHeartbeat.date;
   });
-}, { deep: true });
+});
 
 // 重试
 const refresh = async () => {

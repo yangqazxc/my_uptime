@@ -145,6 +145,9 @@ nav {
   left: 0;
   width: 100%;
   z-index: 100;
+  // 创建独立合成层，避免 scroll class 切换时触发整页重绘
+  transform: translateZ(0);
+  backface-visibility: hidden;
   transition:
     background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
