@@ -191,6 +191,7 @@ footer[data-v-536253a5]::after {
   .n-scrollbar-container {
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior: contain;
+    touch-action: pan-y;
   }
 }
 
