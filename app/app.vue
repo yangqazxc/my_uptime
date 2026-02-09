@@ -51,10 +51,14 @@ const checkSite = async () => {
   }
 };
 
-// 页面滚动（节流处理，避免频繁更新导致卡顿）
+// 页面滚动（节流 + rAF 同步浏览器绘制帧，避免帧不同步导致卡顿）
+let rafId = 0;
 const siteScrollRaw = (e: Event) => {
   const scrollTop = (e.target as HTMLElement).scrollTop;
-  statusStore.scrollTop = scrollTop;
+  cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(() => {
+    statusStore.scrollTop = scrollTop;
+  });
 };
 const siteScroll = useThrottleFn(siteScrollRaw, 50);
 
